@@ -91,17 +91,22 @@ class _MyAccountPageState extends State<MyAccountPage> {
                               style: TextStyle(
                                   color: Colors.white, fontSize: 12))),
                       FlatButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            // Navigator.pushNamed(context, '/register');
+                          },
                           child: Text('Register here',
                               style: TextStyle(
                                   color: Colors.white, fontSize: 12))),
                       Center(
                         child: Container(
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Colors.white24,
-                              borderRadius: BorderRadius.circular(8)),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                          ),
                           child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             child: Text(
                               'Sign in',
                               style:
@@ -110,6 +115,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             onPressed: () {
                               print('sign in btn pressed!');
                             },
+                            color: Colors.white24,
                           ),
                         ),
                       ),
@@ -142,13 +148,21 @@ class _MyAccountPageState extends State<MyAccountPage> {
                           ),
                         ],
                       ),
+                      SizedBox(
+                        height: 8,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
                               onPressed: () {
                                 print('google btn pressed!');
                               },
+                              color: Colors.white24,
                               child: Row(
                                 children: <Widget>[
                                   Image.asset('assets/images/google.png'),
@@ -160,9 +174,13 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                 ],
                               )),
                           FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               onPressed: () {
                                 print('wechat btn pressed!');
                               },
+                              color: Colors.white24,
                               child: Row(
                                 children: <Widget>[
                                   Image.asset('assets/images/wechat.png'),

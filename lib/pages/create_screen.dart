@@ -43,6 +43,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
     ),
     PreviewItem(title: '预览效果：')
   ];
+  int _selectedIndex;
 
   Widget _navigationBar() => AppBar(
         title: Text('Create the Vital Day'),
@@ -78,15 +79,28 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
             final item = menuItems[index];
 
             if (item is MenuItem) {
-              return ListTile(
-                leading: item.icon,
-                title: Text(
-                  item.title,
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Text(
-                  item.content,
-                  style: TextStyle(color: Colors.white),
+              return Container(
+                color: _selectedIndex == index ? Colors.white10 : null,
+                child: ListTile(
+                  onTap: () {
+                    print('clicked the $index item');
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                    // navigate to the calendar pick screen
+                    if (index == 1) {
+                      Navigator.pushNamed(context, '/calendar');
+                    }
+                  },
+                  leading: item.icon,
+                  title: Text(
+                    item.title,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  trailing: Text(
+                    item.content,
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               );
             } else if (item is PreviewItem) {
