@@ -1,6 +1,7 @@
 import 'dart:wasm';
 
 import 'package:flutter/material.dart';
+import 'package:vital_days/utils/auth.dart';
 
 class MyAccountPage extends StatefulWidget {
   @override
@@ -8,12 +9,16 @@ class MyAccountPage extends StatefulWidget {
 }
 
 class _MyAccountPageState extends State<MyAccountPage> {
+  Auth _auth;
   bool _isPasswordShow = false;
+  final _accountController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _auth = Auth();
   }
 
   @override
@@ -45,6 +50,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   SizedBox(height: 24),
                   // Account & password section
                   TextField(
+                    controller: _accountController,
                     decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.people,
@@ -58,6 +64,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   ),
                   SizedBox(height: 24),
                   TextField(
+                    controller: _passwordController,
                     obscureText: !_isPasswordShow ? true : false,
                     decoration: InputDecoration(
                         prefixIcon: Icon(
@@ -113,7 +120,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                   TextStyle(color: Colors.white, fontSize: 14),
                             ),
                             onPressed: () {
-                              print('sign in btn pressed!');
+                              print(
+                                  'sign in btn pressed! $_accountController.text, $_passwordController.text');
+                              signIn(_accountController.text,
+                                  _passwordController.text);
                             },
                             color: Colors.white24,
                           ),
@@ -198,5 +208,11 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 ],
               ))),
     );
+  }
+
+  void signIn(String email, String password) {
+    if (email != "" && password != "") {
+      _auth.signIn(email, password);
+    }
   }
 }
