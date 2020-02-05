@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vital_days/pages/myaccount_screen.dart';
+import 'package:vital_days/utils/auth.dart';
 import 'package:vital_days/widgets/cardview.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -19,6 +21,28 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _cardViews = [];
+
+    checkUsers() == false
+        ? {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => MyAccountPage())),
+            Auth().signOut()
+          }
+        : print('signed in already');
+  }
+
+  // check whether there is a user signed in already
+  Future<bool> checkUsers() async {
+    FirebaseUser user = await Auth().getCurrent();
+    return user != null ? true : false;
+  }
+
+  // sign in
+  void signIn() async {
+    FirebaseUser user = await Auth().signIn("test@123.com", "test1234");
+    if (user != null) {
+      print(user.uid);
+    }
   }
 
 // get images
