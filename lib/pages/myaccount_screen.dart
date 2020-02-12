@@ -1,6 +1,9 @@
 import 'dart:wasm';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:vital_days/pages/main_screen.dart';
+import 'package:vital_days/pages/register_page.dart';
 import 'package:vital_days/utils/auth.dart';
 
 class MyAccountPage extends StatefulWidget {
@@ -14,10 +17,21 @@ class _MyAccountPageState extends State<MyAccountPage> {
   final _accountController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  // sign in method
+  Future<FirebaseUser> _signIn(String email, String pass) async {
+    if (email != null && pass != null) {
+      dynamic user = await _auth.signIn(email, pass);
+      return user != null ? user : null;
+    } else {
+      return null;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _auth = Auth();
   }
 
@@ -99,7 +113,10 @@ class _MyAccountPageState extends State<MyAccountPage> {
                                   color: Colors.white, fontSize: 12))),
                       FlatButton(
                           onPressed: () {
-                            // Navigator.pushNamed(context, '/register');
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterPage()));
                           },
                           child: Text('Register here',
                               style: TextStyle(
@@ -122,8 +139,16 @@ class _MyAccountPageState extends State<MyAccountPage> {
                             onPressed: () {
                               print(
                                   'sign in btn pressed! $_accountController.text, $_passwordController.text');
-                              signIn(_accountController.text,
+                              dynamic user = _signIn(_accountController.text,
                                   _passwordController.text);
+                              if (user != null) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MainScreen()));
+                              }else{
+                                print("login failed");
+                              }
                             },
                             color: Colors.white24,
                           ),
@@ -208,11 +233,5 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 ],
               ))),
     );
-  }
-
-  void signIn(String email, String password) {
-    if (email != "" && password != "") {
-      _auth.signIn(email, password);
-    }
   }
 }

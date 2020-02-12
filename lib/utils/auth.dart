@@ -1,38 +1,30 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class AuthBase {
-  Future<FirebaseUser> signIn(String email, String password);
-  Future<FirebaseUser> signUp(String email, String password);
-  Future<FirebaseUser> getCurrent();
-  Future<void> signOut();
-}
+class Auth {
+  final _auth = FirebaseAuth.instance;
 
-class Auth implements AuthBase {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-
-  @override
-  Future<FirebaseUser> getCurrent() {
-    return auth.currentUser();
+  // get the current user
+  Stream<FirebaseUser> get user {
+    return _auth.onAuthStateChanged;
   }
 
-  @override
-  Future<FirebaseUser> signIn(String email, String password) async {
-    FirebaseUser user = (await auth.signInWithEmailAndPassword(
-            email: email, password: password))
-        .user;
-    return user;
+  // sign in with email and password
+  Future<FirebaseUser> signIn(String email, String pass) async {
+    try {
+      AuthResult result =
+          await _auth.signInWithEmailAndPassword(email: email, password: pass);
+      if (result != null) {
+        return result.user;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("sign in with email and password with errors: $e");
+    }
   }
 
-  @override
-  Future<void> signOut() {
-    return auth.signOut();
-  }
-
-  @override
-  Future<FirebaseUser> signUp(String email, String password) async {
-    FirebaseUser user = (await auth.createUserWithEmailAndPassword(
-            email: email, password: password))
-        .user;
-    return user;
+  // sign out method
+  void signOut() async {
+    await _auth.signOut();
   }
 }

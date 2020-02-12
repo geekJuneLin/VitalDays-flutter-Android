@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "397061041186",
+    "firebase_url": "https://vital-days.firebaseio.com",
+    "project_id": "vital-days",
+    "storage_bucket": "vital-days.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397061041186:android:8c350a2d5073b0ae11ae7b",
+        "android_client_info": {
+          "package_name": "com.example.vital_days"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397061041186-pjqdusnhtqoe6lca6047ula47g4noapo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQlQ5h4bgn1Mwv_XyWgWCO6gqLL-hT8xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397061041186-pjqdusnhtqoe6lca6047ula47g4noapo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "397061041186-cnk2o7oeuruuehennv2i578840gj1nrg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "Junyu.VitalDays.Vital-Days"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

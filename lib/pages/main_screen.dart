@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vital_days/pages/my_account.dart';
 import 'package:vital_days/pages/myaccount_screen.dart';
 import 'package:vital_days/utils/auth.dart';
 import 'package:vital_days/widgets/cardview.dart';
@@ -21,28 +23,12 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _cardViews = [];
-
-    checkUsers() == false
-        ? {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => MyAccountPage())),
-            Auth().signOut()
-          }
-        : print('signed in already');
   }
 
-  // check whether there is a user signed in already
-  Future<bool> checkUsers() async {
-    FirebaseUser user = await Auth().getCurrent();
-    return user != null ? true : false;
-  }
-
-  // sign in
-  void signIn() async {
-    FirebaseUser user = await Auth().signIn("test@123.com", "test1234");
-    if (user != null) {
-      print(user.uid);
-    }
+  // check if there is a current user
+  FirebaseUser _checkingUser() {
+    FirebaseUser user = Provider.of<FirebaseUser>(context, listen: false);
+    return user != null ? user : null;
   }
 
 // get images
@@ -123,8 +109,15 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.blue[200]),
             ),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyAccountPage()));
+              dynamic user = _checkingUser();
+
+              if (user == null) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyAccountPage()));
+              } else {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MyAccount()));
+              }
             },
           ),
           // More info
