@@ -136,18 +136,20 @@ class _MyAccountPageState extends State<MyAccountPage> {
                               style:
                                   TextStyle(color: Colors.white, fontSize: 14),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               print(
                                   'sign in btn pressed! $_accountController.text, $_passwordController.text');
-                              dynamic user = _signIn(_accountController.text,
+                              dynamic user = await _signIn(
+                                  _accountController.text,
                                   _passwordController.text);
                               if (user != null) {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => MainScreen()));
-                              }else{
-                                print("login failed");
+                              } else {
+                                _showError(context,
+                                    "Sign in with errors! Please double check your email or password!");
                               }
                             },
                             color: Colors.white24,
@@ -233,5 +235,23 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 ],
               ))),
     );
+  }
+
+  // show error dialog
+  _showError(BuildContext context, String error) {
+    Widget okBtn = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    AlertDialog dialog = AlertDialog(
+      title: Text("Error!"),
+      content: Text("$error"),
+      actions: <Widget>[okBtn],
+    );
+
+    showDialog(context: context, child: dialog);
   }
 }
