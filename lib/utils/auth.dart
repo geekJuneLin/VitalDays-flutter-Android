@@ -8,6 +8,10 @@ class Auth {
     return _auth.onAuthStateChanged;
   }
 
+  Future<FirebaseUser> getCurrentUser() {
+    return _auth.currentUser();
+  }
+
   // sign in with email and password
   Future<FirebaseUser> signIn(String email, String pass) async {
     try {

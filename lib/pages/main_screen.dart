@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vital_days/pages/my_account.dart';
@@ -8,6 +9,7 @@ import 'package:vital_days/pages/myaccount_screen.dart';
 import 'package:vital_days/utils/auth.dart';
 import 'package:vital_days/widgets/cardview.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vital_days/model/event.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -17,12 +19,46 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
 // states
   File _image;
-  List _cardViews;
+  List<VitalEvent> _cardViews;
+  String _uid;
+
+  final _auth = Auth();
+  var _ref = FirebaseDatabase().reference();
 
   @override
   void initState() {
     super.initState();
     _cardViews = [];
+
+    // data fetching test
+    _fetchData();
+  }
+
+  // fetch data from firestore
+  _fetchData() async {
+    await _auth.getCurrentUser().then((user) {
+      _uid = user.uid;
+    });
+    if (_uid != null) {
+      print('retreiving data...');
+      List<VitalEvent> events = [];
+      _ref.child("Events").child(_uid).once().then((DataSnapshot snapshot) {
+        snapshot.value.forEach((key, value) => {
+              print(value["note"]),
+              events.add(VitalEvent(
+                  note: value["note"],
+                  noteType: value["noteType"],
+                  targetDate: value["targetDate"],
+                  daysLeft: value["leftDays"]))
+            });
+        // set the state
+        setState(() {
+          _cardViews = events;
+        });
+      });
+    } else {
+      print('not uid found!');
+    }
   }
 
   // check if there is a current user
@@ -175,7 +211,14 @@ class _MainScreenState extends State<MainScreen> {
                       ],
                     ))
               ]
-            : _cardViews.map((card) => CardView()).toList(),
+            : _cardViews
+                .map((card) => CardView(
+                      note: card.note,
+                      noteType: card.noteType,
+                      targetDate: card.targetDate,
+                      daysLeft: card.daysLeft,
+                    ))
+                .toList(),
       ),
 
       // BottomNavigationTabBar

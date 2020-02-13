@@ -2,8 +2,18 @@ import 'package:flutter/material.dart';
 
 class CardView extends StatelessWidget {
   BoxDecoration decoration;
+  String note;
+  String noteType;
+  String targetDate;
+  int daysLeft;
 
-  CardView({this.decoration});
+  CardView({
+    this.decoration,
+    @required this.note,
+    @required this.noteType,
+    @required this.targetDate,
+    @required this.daysLeft,
+  });
 
   Widget get topSection => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -17,7 +27,7 @@ class CardView extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Text(
-                    'WWDC',
+                    '$note',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -26,7 +36,7 @@ class CardView extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  Text('倒计时',
+                  Text('$noteType',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -37,7 +47,7 @@ class CardView extends StatelessWidget {
               // Small NoteType
               Container(
                 color: Colors.white24,
-                child: Text(' 倒计时 ',
+                child: Text(' $noteType ',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -55,7 +65,7 @@ class CardView extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  Text('2020 - 2 - 5',
+                  Text('$targetDate',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -76,7 +86,7 @@ class CardView extends StatelessWidget {
               SizedBox(
                 height: 2,
               ),
-              Text('4',
+              Text('$daysLeft',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
