@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vital_days/pages/my_account.dart';
 import 'package:vital_days/pages/myaccount_screen.dart';
@@ -42,23 +43,60 @@ class _MainScreenState extends State<MainScreen> {
     if (_uid != null) {
       print('retreiving data...');
       List<VitalEvent> events = [];
+      int diff = 0;
       _ref.child("Events").child(_uid).once().then((DataSnapshot snapshot) {
         snapshot.value.forEach((key, value) => {
               print(value["note"]),
+
+              // calculate the difference between targetDate and today
+              diff = _calculateDiff(
+                  DateFormat("yyyy-MM-dd").parse(value["targetDate"])),
+              print("the diff: $diff"),
+
+              // check the current days left if is equal to the calculated diff
+              // if not, then update the diff onto database and display it on the screen
+              diff = _updateDaysLeft(value["leftDays"], diff, key)
+                  ? diff
+                  : value["leftDays"],
+
               events.add(VitalEvent(
                   note: value["note"],
                   noteType: value["noteType"],
                   targetDate: value["targetDate"],
-                  daysLeft: value["leftDays"]))
+                  daysLeft: diff))
             });
+
         // set the state
         setState(() {
           _cardViews = events;
         });
       });
     } else {
-      print('not uid found!');
+      print('no uid found!');
     }
+  }
+
+  // check if the diff needed to be updated onto DB
+  bool _updateDaysLeft(int curr, int diff, String key) {
+    if (curr != diff) {
+      _updateOntoDB(diff, key);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // update the diff onto DB
+  _updateOntoDB(int days, String key) {
+    print("updating the child path of: $key");
+    _ref.child("Events").child(_uid).child(key).update({
+      "leftDays": days,
+    });
+  }
+
+  // calculate the difference between today and target date
+  int _calculateDiff(DateTime target) {
+    return (-DateTime.now().difference(target).inDays) + 1;
   }
 
   // check if there is a current user
@@ -67,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
     return user != null ? user : null;
   }
 
-// get images
+  // get images
   Future getImages() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
