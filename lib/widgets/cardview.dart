@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CardView extends StatelessWidget {
   BoxDecoration decoration;
@@ -9,10 +10,10 @@ class CardView extends StatelessWidget {
 
   CardView({
     this.decoration,
-    @required this.note,
-    @required this.noteType,
-    @required this.targetDate,
-    @required this.daysLeft,
+    this.note,
+    this.noteType,
+    this.targetDate,
+    this.daysLeft,
   });
 
   Widget get topSection => Row(
@@ -27,7 +28,7 @@ class CardView extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Text(
-                    '$note',
+                    note == null ? '输入备注' : '$note',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -36,7 +37,7 @@ class CardView extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  Text('$noteType',
+                  Text(noteType == null ? '类型' : '$noteType',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -47,7 +48,7 @@ class CardView extends StatelessWidget {
               // Small NoteType
               Container(
                 color: Colors.white24,
-                child: Text(' $noteType ',
+                child: Text(noteType == null ? ' 类型 ' : ' $noteType ',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -65,7 +66,7 @@ class CardView extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  Text('$targetDate',
+                  Text(targetDate == null ? DateFormat("yyyy-MM-dd").format(DateTime.now()) : '$targetDate',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -86,7 +87,7 @@ class CardView extends StatelessWidget {
               SizedBox(
                 height: 2,
               ),
-              Text('$daysLeft',
+              Text(daysLeft == null ? "0" : '$daysLeft',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,

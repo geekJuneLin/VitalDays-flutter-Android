@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vital_days/pages/create_screen.dart';
 import 'package:vital_days/pages/my_account.dart';
 import 'package:vital_days/pages/myaccount_screen.dart';
 import 'package:vital_days/utils/auth.dart';
@@ -124,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.add),
             onPressed: () {
               print('create btn pressed!');
-              Navigator.pushNamed(context, '/createDay');
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CreateDayScreen()));
             },
           )
         ],
