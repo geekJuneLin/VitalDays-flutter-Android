@@ -16,7 +16,7 @@ class CardView extends StatelessWidget {
     this.daysLeft,
   });
 
-  Widget get topSection => Row(
+  Widget topSection(context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -113,7 +113,7 @@ class CardView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             // Top section
-            topSection,
+            topSection(context),
 
             // Bottom bar
             Stack(

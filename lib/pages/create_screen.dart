@@ -1,8 +1,10 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vital_days/model/create_day_menu_item.dart';
 import 'package:vital_days/pages/calendar_pick_screen.dart';
+import 'package:vital_days/utils/auth.dart';
 import 'package:vital_days/widgets/cardview.dart';
 
 class CreateDayScreen extends StatefulWidget {
@@ -15,6 +17,8 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
   String _selectedType = "";
   String _selectedRepeat = "";
   String _selectedDate = "";
+
+  final _ref = FirebaseDatabase.instance.reference();
 
   final _noteController = TextEditingController();
 
@@ -64,6 +68,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
           FlatButton(
             onPressed: () {
               print('save btn pressed!');
+              _saveEvent(context);
             },
             child: Row(
               children: <Widget>[
@@ -107,7 +112,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                           child: TextField(
                             controller: _noteController,
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                                border: InputBorder.none,
                                 hintText: item.content,
                                 hintStyle: TextStyle(
                                   color: Colors.grey[200],
@@ -158,7 +163,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
 
                           // navigate to the calendar pick screen
                           if (index == 1) {
-                            presentCalendar();
+                            _presentCalendar();
                           }
 
                           // repeat picker view
@@ -263,7 +268,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         ));
   }
 
-  presentCalendar() async {
+  _presentCalendar() async {
     final date = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => CalendarPage()));
     if (date != null) {
@@ -271,5 +276,58 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         _selectedDate = DateFormat("yyyy-MM-dd").format(date);
       });
     }
+  }
+
+  _saveEvent(BuildContext context) async {
+    // check the note textfield first
+    if (_noteController.text == null || _noteController.text == "") {
+      _showError(context, "Please enter the note");
+      return;
+    }
+    if (_selectedDate != "" &&
+        _selectedType != "" &&
+        _selectedRepeat != "") {
+      dynamic uid;
+      await Auth().getCurrentUser().then((user) => {uid = user.uid});
+      if (uid != null) {
+        print(
+            "set value onto DB: $_selectedType, $_selectedRepeat, $_selectedDate, " +
+                _noteController.text +
+                " uid: $uid");
+        _ref.child("Events").child(uid).push().set(<String, dynamic>{
+          'note': _noteController.text,
+          'noteType': _selectedType,
+          'targetDate': _selectedDate,
+          'leftDays': DateFormat("yyyy-MM-dd")
+              .parse(_selectedDate)
+              .difference(DateTime.now())
+              .inDays
+        }).then((_) {
+          print("save event successfully");
+          Navigator.pop(context, true);
+        });
+      } else {
+        _showError(context, "no uid found!");
+      }
+    } else {
+      _showError(context, "Save event with errors");
+    }
+  }
+
+  _showError(BuildContext context, String error) {
+    Widget okBtn = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+
+    AlertDialog dialog = AlertDialog(
+      title: Text("Error!"),
+      content: Text("$error"),
+      actions: <Widget>[okBtn],
+    );
+
+    showDialog(context: context, child: dialog);
   }
 }
