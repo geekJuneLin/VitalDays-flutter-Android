@@ -4,18 +4,19 @@ import 'package:table_calendar/table_calendar.dart';
 class CalendarPage extends StatefulWidget {
   @override
   _CalendarPageState createState() => _CalendarPageState();
+
+  
 }
 
 class _CalendarPageState extends State<CalendarPage> {
   bool _isNaviBackBtnClicked = false;
-  List _selectedEvents;
+  DateTime selectedDate;
   CalendarController _calendarController;
 
   @override
   void initState() {
     super.initState();
     _calendarController = CalendarController();
-    _selectedEvents = [];
   }
 
   @override
@@ -25,9 +26,8 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   void _onDaySelected(DateTime day, List event) {
-    print('onDaySelected callback: $day');
     setState(() {
-      _selectedEvents = event;
+      selectedDate = day;
     });
   }
 
@@ -65,7 +65,10 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
         actions: <Widget>[
           FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              print('onDaySelected callback: $selectedDate');
+              passDataBack(context, selectedDate);
+            },
             child: Text(
               '保存',
               style: TextStyle(
@@ -76,10 +79,14 @@ class _CalendarPageState extends State<CalendarPage> {
         ],
       ),
       body: TableCalendar(
-        locale: 'zh_CN',
+        // locale: 'zh_CN',
         calendarController: _calendarController,
         onDaySelected: _onDaySelected,
       ),
     );
+  }
+
+  passDataBack(BuildContext context, DateTime date){
+    Navigator.pop(context, date);
   }
 }

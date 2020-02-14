@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vital_days/model/create_day_menu_item.dart';
+import 'package:vital_days/pages/calendar_pick_screen.dart';
 import 'package:vital_days/widgets/cardview.dart';
 
 class CreateDayScreen extends StatefulWidget {
@@ -8,6 +11,16 @@ class CreateDayScreen extends StatefulWidget {
 }
 
 class _CreateDayScreenState extends State<CreateDayScreen> {
+  // states
+  String _selectedType = "";
+  String _selectedRepeat = "";
+  String _selectedDate = "";
+
+  final _noteController = TextEditingController();
+
+  final _typeItems = ["倒计时", "纪念日", "生日", "作业"];
+  final _repeatItems = ["不重复", "周重复", "月重复", "天重复", "年重复"];
+
   final menuItems = [
     MenuItem(
       title: "种类",
@@ -15,7 +28,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         Icons.category,
         color: Colors.white,
       ),
-      content: "倒计时",
+      content: "选择种类",
     ),
     MenuItem(
       title: "目标日期",
@@ -23,7 +36,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         Icons.email,
         color: Colors.white,
       ),
-      content: "2020-2-5",
+      content: DateFormat("yyyy-MM-dd").format(DateTime.now()),
     ),
     MenuItem(
       title: "循环提醒",
@@ -31,7 +44,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         Icons.repeat,
         color: Colors.white,
       ),
-      content: "无循环",
+      content: "选择循环类型",
     ),
     MenuItem(
       title: "备注",
@@ -39,7 +52,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         Icons.note_add,
         color: Colors.white,
       ),
-      content: "宝贝回来",
+      content: "填写备注",
     ),
     PreviewItem(title: '预览效果：')
   ];
@@ -81,27 +94,139 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
             if (item is MenuItem) {
               return Container(
                 color: _selectedIndex == index ? Colors.white10 : null,
-                child: ListTile(
-                  onTap: () {
-                    print('clicked the $index item');
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                    // navigate to the calendar pick screen
-                    if (index == 1) {
-                      Navigator.pushNamed(context, '/calendar');
-                    }
-                  },
-                  leading: item.icon,
-                  title: Text(
-                    item.title,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  trailing: Text(
-                    item.content,
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                child: index == 3
+                    ? ListTile(
+                        leading: item.icon,
+                        title: Text(
+                          item.title,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        trailing: Container(
+                          width: 100,
+                          padding: EdgeInsets.only(left: 44),
+                          child: TextField(
+                            controller: _noteController,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                                hintText: item.content,
+                                hintStyle: TextStyle(
+                                  color: Colors.grey[200],
+                                  fontSize: 14,
+                                )),
+                          ),
+                        ),
+                      )
+                    : ListTile(
+                        onTap: () {
+                          print('clicked the $index item');
+                          setState(() {
+                            _selectedIndex = index;
+                          });
+                          // kind picker
+                          if (index == 0) {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Scaffold(
+                                    body: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        child: Center(
+                                            child: CupertinoPicker(
+                                          backgroundColor: Colors.blue[200],
+                                          itemExtent: 30,
+                                          onSelectedItemChanged: (index) {
+                                            setState(() {
+                                              _selectedType = _typeItems[index];
+                                            });
+                                            print("selected $_selectedType");
+                                          },
+                                          children: _typeItems.map((type) {
+                                            return Text(
+                                              "$type",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ))),
+                                  );
+                                });
+                          }
+
+                          // navigate to the calendar pick screen
+                          if (index == 1) {
+                            presentCalendar();
+                          }
+
+                          // repeat picker view
+                          if (index == 2) {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Scaffold(
+                                    body: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        child: Center(
+                                            child: CupertinoPicker(
+                                          backgroundColor: Colors.blue[200],
+                                          itemExtent: 30,
+                                          onSelectedItemChanged: (index) {
+                                            setState(() {
+                                              _selectedRepeat =
+                                                  _repeatItems[index];
+                                            });
+                                            print("selected $_selectedRepeat");
+                                          },
+                                          children: _repeatItems.map((type) {
+                                            return Text(
+                                              "$type",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ))),
+                                  );
+                                });
+                          }
+                        },
+                        leading: item.icon,
+                        title: Text(
+                          item.title,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        trailing: index == 0
+                            ? Text(
+                                _selectedType == ""
+                                    ? item.content
+                                    : _selectedType,
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : index == 2
+                                ? Text(
+                                    _selectedRepeat == ""
+                                        ? item.content
+                                        : _selectedRepeat,
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                : index == 1
+                                    ? Text(
+                                        _selectedDate == ""
+                                            ? item.content
+                                            : _selectedDate,
+                                        style: TextStyle(color: Colors.white),
+                                      )
+                                    : Text(
+                                        item.content,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                      ),
               );
             } else if (item is PreviewItem) {
               return Container(
@@ -136,5 +261,15 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
             }
           },
         ));
+  }
+
+  presentCalendar() async {
+    final date = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CalendarPage()));
+    if (date != null) {
+      setState(() {
+        _selectedDate = DateFormat("yyyy-MM-dd").format(date);
+      });
+    }
   }
 }
