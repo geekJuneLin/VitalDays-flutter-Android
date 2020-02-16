@@ -1,8 +1,8 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 
-// class UserState {
-//   bool isLoading;
-//   FirebaseUser user;
+class User {
+  String name;
+  String email;
 
-//   UserState(this.isLoading, this.user);
-// }
+  User({this.name, this.email});
+}

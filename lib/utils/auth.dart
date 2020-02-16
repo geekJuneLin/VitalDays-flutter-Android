@@ -24,6 +24,7 @@ class Auth {
       }
     } catch (e) {
       print("sign in with email and password with errors: $e");
+      return null;
     }
   }
 
