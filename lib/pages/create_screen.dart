@@ -17,6 +17,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
   String _selectedType = "";
   String _selectedRepeat = "";
   String _selectedDate = "";
+  String _note = "";
 
   final _ref = FirebaseDatabase.instance.reference();
 
@@ -85,6 +86,20 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
           )
         ],
       );
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // add listener for note textfield to update the cardview real time
+    _noteController.addListener((){
+      final value = _noteController.text;
+      setState(() {
+        _note = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -250,16 +265,21 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                     ),
                     SizedBox(height: 12),
                     CardView(
-                        decoration: BoxDecoration(
-                            color: Colors.blue[300],
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          )
-                        ]))
+                      decoration: BoxDecoration(
+                          color: Colors.blue[300],
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 5,
+                              spreadRadius: 1,
+                            )
+                          ]),
+                      note: _note,
+                      noteType: _selectedType,
+                      targetDate: _selectedDate,
+                      daysLeft: 10,
+                    )
                   ],
                 ),
               );
@@ -284,9 +304,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
       _showError(context, "Please enter the note");
       return;
     }
-    if (_selectedDate != "" &&
-        _selectedType != "" &&
-        _selectedRepeat != "") {
+    if (_selectedDate != "" && _selectedType != "" && _selectedRepeat != "") {
       dynamic uid;
       await Auth().getCurrentUser().then((user) => {uid = user.uid});
       if (uid != null) {

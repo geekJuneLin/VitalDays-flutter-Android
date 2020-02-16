@@ -125,8 +125,8 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.add),
             onPressed: () async{
               print('create btn pressed!');
-              final finished = await Navigator.push(context, MaterialPageRoute(builder: (context) => CreateDayScreen()));
-              if (finished){
+               final finished = await Navigator.push(context, MaterialPageRoute(builder: (context) => CreateDayScreen()));
+              if (finished != null && finished){
                 _fetchData();
               }
             },

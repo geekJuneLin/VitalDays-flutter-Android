@@ -28,7 +28,7 @@ class CardView extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Text(
-                    note == null ? '输入备注' : '$note',
+                    note == null || note == "" ?  '输入备注' : '$note',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -37,7 +37,7 @@ class CardView extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  Text(noteType == null ? '类型' : '$noteType',
+                  Text(noteType == null || noteType == "" ? '类型' : '$noteType',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -48,7 +48,7 @@ class CardView extends StatelessWidget {
               // Small NoteType
               Container(
                 color: Colors.white24,
-                child: Text(noteType == null ? ' 类型 ' : ' $noteType ',
+                child: Text(noteType == null || noteType == "" ? ' 类型 ' : ' $noteType ',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -66,7 +66,7 @@ class CardView extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  Text(targetDate == null ? DateFormat("yyyy-MM-dd").format(DateTime.now()) : '$targetDate',
+                  Text(targetDate == null || targetDate == "" ? DateFormat("yyyy-MM-dd").format(DateTime.now()) : '$targetDate',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
