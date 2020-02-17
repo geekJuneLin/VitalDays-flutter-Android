@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vital_days/pages/create_screen.dart';
+import 'package:vital_days/pages/more_info_page.dart';
 import 'package:vital_days/pages/my_account.dart';
 import 'package:vital_days/pages/myaccount_screen.dart';
 import 'package:vital_days/utils/auth.dart';
@@ -123,10 +124,11 @@ class _MainScreenState extends State<MainScreen> {
           // Create button
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () async{
+            onPressed: () async {
               print('create btn pressed!');
-               final finished = await Navigator.push(context, MaterialPageRoute(builder: (context) => CreateDayScreen()));
-              if (finished != null && finished){
+              final finished = await Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CreateDayScreen()));
+              if (finished != null && finished) {
                 _fetchData();
               }
             },
@@ -198,6 +200,7 @@ class _MainScreenState extends State<MainScreen> {
               }
             },
           ),
+
           // More info
           ListTile(
             leading: Icon(
@@ -208,6 +211,10 @@ class _MainScreenState extends State<MainScreen> {
               '更多',
               style: TextStyle(color: Colors.blue[200]),
             ),
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MorePage()));
+            },
           ),
           // Settings
           ListTile(

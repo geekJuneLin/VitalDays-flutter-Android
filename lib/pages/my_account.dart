@@ -65,7 +65,7 @@ class _MyAccountState extends State<MyAccount> {
             Expanded(
               child: Column(children: <Widget>[
                 _inforRow("Name", "$_name"),
-                SizedBox(height: 2),
+                SizedBox(height: 6),
                 _inforRow("Email", "$_email"),
               ]),
             ),
