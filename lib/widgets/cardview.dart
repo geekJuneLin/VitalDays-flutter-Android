@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CardView extends StatelessWidget {
-  BoxDecoration decoration;
-  String note;
-  String noteType;
-  String targetDate;
-  int daysLeft;
+  final BoxDecoration decoration;
+  final String note;
+  final String noteType;
+  final String targetDate;
+  final int daysLeft;
+  final int initDaysLeft;
 
   CardView({
     this.decoration,
@@ -14,6 +15,7 @@ class CardView extends StatelessWidget {
     this.noteType,
     this.targetDate,
     this.daysLeft,
+    this.initDaysLeft,
   });
 
   Widget topSection(context) => Row(
@@ -28,7 +30,7 @@ class CardView extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Text(
-                    note == null || note == "" ?  '输入备注' : '$note',
+                    note == null || note == "" ? '输入备注' : '$note',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -48,7 +50,8 @@ class CardView extends StatelessWidget {
               // Small NoteType
               Container(
                 color: Colors.white24,
-                child: Text(noteType == null || noteType == "" ? ' 类型 ' : ' $noteType ',
+                child: Text(
+                    noteType == null || noteType == "" ? ' 类型 ' : ' $noteType ',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -66,7 +69,10 @@ class CardView extends StatelessWidget {
                   SizedBox(
                     width: 10,
                   ),
-                  Text(targetDate == null || targetDate == "" ? DateFormat("yyyy-MM-dd").format(DateTime.now()) : '$targetDate',
+                  Text(
+                      targetDate == null || targetDate == ""
+                          ? DateFormat("yyyy-MM-dd").format(DateTime.now())
+                          : '$targetDate',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -129,7 +135,11 @@ class CardView extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: Colors.blue[100],
                       borderRadius: BorderRadius.all(Radius.circular(5))),
-                  width: MediaQuery.of(context).size.width * 0.15,
+                  width: MediaQuery.of(context).size.width *
+                              ((initDaysLeft - daysLeft) <=
+                          0
+                      ? 0.001
+                      : ((initDaysLeft - daysLeft) / initDaysLeft)),
                   height: 10,
                 )
               ],

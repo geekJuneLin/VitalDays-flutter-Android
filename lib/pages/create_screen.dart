@@ -19,6 +19,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
   String _selectedDate = "";
   String _note = "";
   int _daysLeft = 0;
+  int _selectedIndex;
 
   final _ref = FirebaseDatabase.instance.reference();
 
@@ -62,7 +63,6 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
     ),
     PreviewItem(title: '预览效果：')
   ];
-  int _selectedIndex;
 
   Widget _navigationBar() => AppBar(
         title: Text('Create the Vital Day'),
@@ -88,6 +88,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         ],
       );
 
+  // init state func
   @override
   void initState() {
     // TODO: implement initState
@@ -282,6 +283,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                       noteType: _selectedType,
                       targetDate: _selectedDate,
                       daysLeft: _daysLeft,
+                      initDaysLeft: _daysLeft == 0 ? 1 : _daysLeft,
                     )
                   ],
                 ),
@@ -313,20 +315,25 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
     }
     if (_selectedDate != "" && _selectedType != "" && _selectedRepeat != "") {
       dynamic uid;
+      int daysLeft;
       await Auth().getCurrentUser().then((user) => {uid = user.uid});
       if (uid != null) {
         print(
             "set value onto DB: $_selectedType, $_selectedRepeat, $_selectedDate, " +
                 _noteController.text +
                 " uid: $uid");
+
+        daysLeft = DateFormat("yyyy-MM-dd")
+            .parse(_selectedDate)
+            .difference(DateTime.now())
+            .inDays;
+
         _ref.child("Events").child(uid).push().set(<String, dynamic>{
           'note': _noteController.text,
           'noteType': _selectedType,
           'targetDate': _selectedDate,
-          'leftDays': DateFormat("yyyy-MM-dd")
-              .parse(_selectedDate)
-              .difference(DateTime.now())
-              .inDays
+          'leftDays': daysLeft,
+          "initialLeft": daysLeft,
         }).then((_) {
           print("save event successfully");
           Navigator.pop(context, true);

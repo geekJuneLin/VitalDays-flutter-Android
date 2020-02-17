@@ -65,7 +65,8 @@ class _MainScreenState extends State<MainScreen> {
                   note: value["note"],
                   noteType: value["noteType"],
                   targetDate: value["targetDate"],
-                  daysLeft: diff))
+                  daysLeft: diff,
+                  initDaysLeft: value["initialLeft"]))
             });
 
         // set the state
@@ -266,6 +267,7 @@ class _MainScreenState extends State<MainScreen> {
                       noteType: card.noteType,
                       targetDate: card.targetDate,
                       daysLeft: card.daysLeft,
+                      initDaysLeft: card.initDaysLeft,
                     ))
                 .toList(),
       ),
