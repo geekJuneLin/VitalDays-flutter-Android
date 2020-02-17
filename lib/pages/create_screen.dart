@@ -18,6 +18,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
   String _selectedRepeat = "";
   String _selectedDate = "";
   String _note = "";
+  int _daysLeft = 0;
 
   final _ref = FirebaseDatabase.instance.reference();
 
@@ -93,7 +94,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
     super.initState();
 
     // add listener for note textfield to update the cardview real time
-    _noteController.addListener((){
+    _noteController.addListener(() {
       final value = _noteController.text;
       setState(() {
         _note = value;
@@ -264,6 +265,8 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                       style: TextStyle(color: Colors.white),
                     ),
                     SizedBox(height: 12),
+
+                    // cardview
                     CardView(
                       decoration: BoxDecoration(
                           color: Colors.blue[300],
@@ -278,7 +281,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                       note: _note,
                       noteType: _selectedType,
                       targetDate: _selectedDate,
-                      daysLeft: 10,
+                      daysLeft: _daysLeft,
                     )
                   ],
                 ),
@@ -288,6 +291,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         ));
   }
 
+  // present the calendar picker view
   _presentCalendar() async {
     final date = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => CalendarPage()));
@@ -295,9 +299,12 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
       setState(() {
         _selectedDate = DateFormat("yyyy-MM-dd").format(date);
       });
+
+      _calcDaysLeft();
     }
   }
 
+  // save the created the event onto DB
   _saveEvent(BuildContext context) async {
     // check the note textfield first
     if (_noteController.text == null || _noteController.text == "") {
@@ -332,6 +339,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
     }
   }
 
+  // show the error in alert dialog
   _showError(BuildContext context, String error) {
     Widget okBtn = FlatButton(
       child: Text("OK"),
@@ -347,5 +355,18 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
     );
 
     showDialog(context: context, child: dialog);
+  }
+
+  // calculate how much days left according to the date that's been selected
+  _calcDaysLeft() {
+    setState(() {
+      _daysLeft = _selectedDate == ""
+          ? 0
+          : DateFormat("yyyy-MM-dd")
+                  .parse(_selectedDate)
+                  .difference(DateTime.now())
+                  .inDays +
+              1;
+    });
   }
 }
