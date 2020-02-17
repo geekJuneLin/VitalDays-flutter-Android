@@ -1,12 +1,30 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:vital_days/pages/myaccount_screen.dart';
 import 'package:vital_days/utils/auth.dart';
 
-class MyAccount extends StatelessWidget {
+class MyAccount extends StatefulWidget {
+  @override
+  _MyAccountState createState() => _MyAccountState();
+}
+
+class _MyAccountState extends State<MyAccount> {
   final _auth = Auth();
+  final _ref = FirebaseDatabase().reference();
+
+  String _uid;
+  String _name;
+  String _email;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _retriveInfo();
+  }
 
   Widget _inforRow(title, value) {
-   return Container(
+    return Container(
         decoration: BoxDecoration(color: Colors.white12),
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Row(
@@ -46,9 +64,9 @@ class MyAccount extends StatelessWidget {
             ),
             Expanded(
               child: Column(children: <Widget>[
-                _inforRow("Name", "June"),
+                _inforRow("Name", "$_name"),
                 SizedBox(height: 2),
-                _inforRow("Email", "qch@123.com"),
+                _inforRow("Email", "$_email"),
               ]),
             ),
             Container(
@@ -65,9 +83,29 @@ class MyAccount extends StatelessWidget {
     );
   }
 
+  // sign out the current user
   _signOut(context) {
     _auth.signOut();
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MyAccountPage()));
+  }
+
+  // retrive the user info
+  _retriveInfo() async {
+    await _auth.getCurrentUser().then((user) {
+      _uid = user.uid;
+    });
+
+    if (_uid != null) {
+      _ref.child("Users").child(_uid).once().then((DataSnapshot snapshot) {
+        print(snapshot.value);
+        setState(() {
+          _name = snapshot.value["name"];
+          _email = snapshot.value["email"];
+        });
+      });
+    } else {
+      print("no uid found");
+    }
   }
 }
