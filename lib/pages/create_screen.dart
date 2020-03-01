@@ -3,23 +3,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vital_days/model/create_day_menu_item.dart';
+import 'package:vital_days/model/event.dart';
 import 'package:vital_days/pages/calendar_pick_screen.dart';
 import 'package:vital_days/utils/auth.dart';
 import 'package:vital_days/widgets/cardview.dart';
 
 class CreateDayScreen extends StatefulWidget {
+  final VitalEvent event;
+
+  CreateDayScreen({this.event});
+
   @override
-  _CreateDayScreenState createState() => _CreateDayScreenState();
+  _CreateDayScreenState createState() => _CreateDayScreenState(
+      selectedType: event.noteType,
+      selectedDate: event.targetDate,
+      note: event.note,
+      daysLeft: event.daysLeft);
 }
 
 class _CreateDayScreenState extends State<CreateDayScreen> {
   // states
-  String _selectedType = "";
-  String _selectedRepeat = "";
-  String _selectedDate = "";
-  String _note = "";
-  int _daysLeft = 0;
+  String selectedType = "";
+  String selectedRepeat = "";
+  String selectedDate = "";
+  String note = "";
+  int daysLeft = 0;
   int _selectedIndex;
+
+  _CreateDayScreenState(
+      {this.selectedType,
+      this.selectedDate,
+      this.note,
+      this.daysLeft});
 
   final _ref = FirebaseDatabase.instance.reference();
 
@@ -98,7 +113,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
     _noteController.addListener(() {
       final value = _noteController.text;
       setState(() {
-        _note = value;
+        note = value;
       });
     });
   }
@@ -161,9 +176,9 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                                           itemExtent: 30,
                                           onSelectedItemChanged: (index) {
                                             setState(() {
-                                              _selectedType = _typeItems[index];
+                                              selectedType = _typeItems[index];
                                             });
-                                            print("selected $_selectedType");
+                                            print("selected $selectedType");
                                           },
                                           children: _typeItems.map((type) {
                                             return Text(
@@ -200,10 +215,10 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                                           itemExtent: 30,
                                           onSelectedItemChanged: (index) {
                                             setState(() {
-                                              _selectedRepeat =
+                                              selectedRepeat =
                                                   _repeatItems[index];
                                             });
-                                            print("selected $_selectedRepeat");
+                                            print("selected $selectedRepeat");
                                           },
                                           children: _repeatItems.map((type) {
                                             return Text(
@@ -225,23 +240,23 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                         ),
                         trailing: index == 0
                             ? Text(
-                                _selectedType == ""
+                                selectedType == ""
                                     ? item.content
-                                    : _selectedType,
+                                    : selectedType,
                                 style: TextStyle(color: Colors.white),
                               )
                             : index == 2
                                 ? Text(
-                                    _selectedRepeat == ""
+                                    selectedRepeat == ""
                                         ? item.content
-                                        : _selectedRepeat,
+                                        : selectedRepeat,
                                     style: TextStyle(color: Colors.white),
                                   )
                                 : index == 1
                                     ? Text(
-                                        _selectedDate == ""
+                                        selectedDate == ""
                                             ? item.content
-                                            : _selectedDate,
+                                            : selectedDate,
                                         style: TextStyle(color: Colors.white),
                                       )
                                     : Text(
@@ -279,11 +294,11 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
                               spreadRadius: 1,
                             )
                           ]),
-                      note: _note,
-                      noteType: _selectedType,
-                      targetDate: _selectedDate,
-                      daysLeft: _daysLeft,
-                      initDaysLeft: _daysLeft == 0 ? 1 : _daysLeft,
+                      note: note,
+                      noteType: selectedType,
+                      targetDate: selectedDate,
+                      daysLeft: daysLeft,
+                      initDaysLeft: daysLeft == 0 ? 1 : daysLeft,
                     )
                   ],
                 ),
@@ -299,7 +314,7 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
         context, MaterialPageRoute(builder: (context) => CalendarPage()));
     if (date != null) {
       setState(() {
-        _selectedDate = DateFormat("yyyy-MM-dd").format(date);
+        selectedDate = DateFormat("yyyy-MM-dd").format(date);
       });
 
       _calcDaysLeft();
@@ -313,25 +328,25 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
       _showError(context, "Please enter the note");
       return;
     }
-    if (_selectedDate != "" && _selectedType != "" && _selectedRepeat != "") {
+    if (selectedDate != "" && selectedType != "" && selectedRepeat != "") {
       dynamic uid;
       int daysLeft;
       await Auth().getCurrentUser().then((user) => {uid = user.uid});
       if (uid != null) {
         print(
-            "set value onto DB: $_selectedType, $_selectedRepeat, $_selectedDate, " +
+            "set value onto DB: $selectedType, $selectedRepeat, $selectedDate, " +
                 _noteController.text +
                 " uid: $uid");
 
         daysLeft = DateFormat("yyyy-MM-dd")
-            .parse(_selectedDate)
+            .parse(selectedDate)
             .difference(DateTime.now())
             .inDays;
 
         _ref.child("Events").child(uid).push().set(<String, dynamic>{
           'note': _noteController.text,
-          'noteType': _selectedType,
-          'targetDate': _selectedDate,
+          'noteType': selectedType,
+          'targetDate': selectedDate,
           'leftDays': daysLeft,
           "initialLeft": daysLeft,
         }).then((_) {
@@ -367,10 +382,10 @@ class _CreateDayScreenState extends State<CreateDayScreen> {
   // calculate how much days left according to the date that's been selected
   _calcDaysLeft() {
     setState(() {
-      _daysLeft = _selectedDate == ""
+      daysLeft = selectedDate == ""
           ? 0
           : DateFormat("yyyy-MM-dd")
-                  .parse(_selectedDate)
+                  .parse(selectedDate)
                   .difference(DateTime.now())
                   .inDays +
               1;

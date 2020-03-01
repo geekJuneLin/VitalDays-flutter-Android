@@ -262,12 +262,19 @@ class _MainScreenState extends State<MainScreen> {
                     ))
               ]
             : _cardViews
-                .map((card) => CardView(
-                      note: card.note,
-                      noteType: card.noteType,
-                      targetDate: card.targetDate,
-                      daysLeft: card.daysLeft,
-                      initDaysLeft: card.initDaysLeft,
+                .map((card) => GestureDetector(
+                      onTap: () => {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CreateDayScreen(
+                          event: card,
+                        )))
+                        },
+                      child: CardView(
+                        note: card.note,
+                        noteType: card.noteType,
+                        targetDate: card.targetDate,
+                        daysLeft: card.daysLeft,
+                        initDaysLeft: card.initDaysLeft,
+                      ),
                     ))
                 .toList(),
       ),
